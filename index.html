@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>劉品姸 — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --black: #0a0a0a;
+    --gray-900: #111;
+    --gray-600: #666;
+    --gray-200: #e5e5e5;
+    --accent: #2563eb;
+    --accent-light: #eff6ff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html {
+    scroll-snap-type: y mandatory;
+    overflow-y: scroll;
+    height: 100%;
+  }
+
+  body {
+    font-family: 'Noto Sans TC', 'Inter', sans-serif;
+    background: #fafafa;
+    color: var(--black);
+    height: 100%;
+  }
+
+  .slide {
+    scroll-snap-align: start;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(40px, 8vw, 96px) clamp(24px, 8vw, 120px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── Fade-up animation ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1),
+                transform 0.7s cubic-bezier(0.22,1,0.36,1);
+  }
+  .fade-up.visible { opacity: 1; transform: none; }
+  .fade-up:nth-child(2) { transition-delay: 0.1s; }
+  .fade-up:nth-child(3) { transition-delay: 0.18s; }
+  .fade-up:nth-child(4) { transition-delay: 0.26s; }
+  .fade-up:nth-child(5) { transition-delay: 0.34s; }
+
+  /* ── Slide number ── */
+  .slide-num {
+    position: absolute;
+    bottom: 32px; right: clamp(24px,8vw,120px);
+    font-size: 11px; letter-spacing: 0.15em;
+    color: #bbb; font-family: 'Inter', sans-serif;
+  }
+
+  /* ── Nav dots ── */
+  #nav-dots {
+    position: fixed; right: 20px; top: 50%;
+    transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 10px;
+    z-index: 100;
+  }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #ccc; cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+    border: none;
+  }
+  .dot.active { background: var(--black); transform: scale(1.4); }
+
+  /* ── Section tag ── */
+  .tag {
+    display: inline-block;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 4px 12px; border-radius: 999px;
+    margin-bottom: 24px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* ── Divider line ── */
+  .line {
+    width: 48px; height: 2px;
+    background: var(--black); margin: 24px 0;
+  }
+
+  /* ── Pill badge ── */
+  .pill {
+    display: inline-block;
+    background: var(--gray-200); color: var(--gray-600);
+    font-size: 12px; padding: 5px 14px; border-radius: 999px;
+    margin: 4px; font-family: 'Inter', sans-serif;
+  }
+
+  /* ── Award card ── */
+  .award-card {
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: 20px;
+    padding: 28px 32px;
+    transition: box-shadow 0.25s, transform 0.25s;
+  }
+  .award-card:hover {
+    box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+    transform: translateY(-3px);
+  }
+
+  /* ── CTA button ── */
+  .cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--black); color: #fff;
+    padding: 14px 32px; border-radius: 999px;
+    font-size: 15px; font-weight: 500; text-decoration: none;
+    transition: background 0.2s, transform 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .cta:hover { background: #333; transform: translateY(-1px); }
+
+  .cta-outline {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1.5px solid var(--black); color: var(--black);
+    padding: 14px 32px; border-radius: 999px;
+    font-size: 15px; font-weight: 500; text-decoration: none;
+    transition: background 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .cta-outline:hover { background: var(--black); color: #fff; }
+
+  /* ── Hero big text ── */
+  .hero-name {
+    font-size: clamp(56px, 11vw, 128px);
+    font-weight: 900; line-height: 0.9;
+    letter-spacing: -0.03em;
+    color: var(--black);
+  }
+  .hero-name span { color: var(--accent); }
+
+  @media (max-width: 640px) {
+    #nav-dots { display: none; }
+    .award-card { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Nav dots -->
+<div id="nav-dots">
+  <button class="dot active" data-slide="0" title="Hero"></button>
+  <button class="dot" data-slide="1" title="About"></button>
+  <button class="dot" data-slide="2" title="Heritage"></button>
+  <button class="dot" data-slide="3" title="Research"></button>
+  <button class="dot" data-slide="4" title="Contact"></button>
+</div>
+
+<!-- ════════════════════════════════
+     1. HERO
+════════════════════════════════ -->
+<section class="slide" style="background:#fafafa;" data-index="0">
+  <div style="max-width:900px;width:100%;">
+    <p class="tag fade-up">Portfolio · 2025</p>
+    <h1 class="hero-name fade-up">
+      劉<br/>品<span>姸</span>
+    </h1>
+    <div class="line fade-up"></div>
+    <p class="fade-up" style="font-size:clamp(16px,2vw,22px);color:#444;max-width:560px;line-height:1.7;font-weight:300;">
+      設計實務與 AI 數據驅動的<br/>跨域實踐者
+    </p>
+    <div class="fade-up" style="margin-top:40px;display:flex;gap:14px;flex-wrap:wrap;">
+      <a href="#" class="cta">查看作品集 →</a>
+      <a href="mailto:hello@example.com" class="cta-outline">聯絡我</a>
+    </div>
+  </div>
+  <span class="slide-num">01 / 05</span>
+</section>
+
+<!-- ════════════════════════════════
+     2. ABOUT
+════════════════════════════════ -->
+<section class="slide" style="background:#fff;" data-index="1">
+  <div style="max-width:900px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,6vw,80px);align-items:center;">
+    <div>
+      <p class="tag fade-up">About</p>
+      <h2 class="fade-up" style="font-size:clamp(36px,5vw,64px);font-weight:800;line-height:1.05;letter-spacing:-0.02em;">
+        跨域<br/>實踐者
+      </h2>
+      <div class="line fade-up"></div>
+      <p class="fade-up" style="font-size:16px;color:#555;line-height:1.9;font-weight:300;">
+        就讀 <strong style="color:var(--black);font-weight:600;">DITL 研究室</strong> 碩士班，專注於服務設計、UX 研究與 AI 自動化工作流的整合應用。相信設計不只是美學，更是解決真實問題的系統性思維。
+      </p>
+      <div class="fade-up" style="margin-top:28px;margin-left:-4px;">
+        <span class="pill">服務設計</span>
+        <span class="pill">UX Research</span>
+        <span class="pill">AI 自動化</span>
+        <span class="pill">資料視覺化</span>
+        <span class="pill">使用者訪談</span>
+        <span class="pill">Figma</span>
+      </div>
+    </div>
+    <div class="fade-up" style="display:flex;flex-direction:column;gap:16px;">
+      <div style="background:#f4f4f4;border-radius:20px;padding:28px;">
+        <div style="font-size:32px;margin-bottom:8px;">🎓</div>
+        <div style="font-weight:600;margin-bottom:4px;">DITL 研究室</div>
+        <div style="font-size:13px;color:#888;">設計整合思維實驗室 · 碩士在讀</div>
+      </div>
+      <div style="background:#eff6ff;border-radius:20px;padding:28px;">
+        <div style="font-size:32px;margin-bottom:8px;">⚡</div>
+        <div style="font-weight:600;margin-bottom:4px;">專長領域</div>
+        <div style="font-size:13px;color:#888;">從研究到原型，從數據到體驗</div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-num">02 / 05</span>
+</section>
+
+<!-- ════════════════════════════════
+     3. HERITAGE
+════════════════════════════════ -->
+<section class="slide" style="background:#0a0a0a;color:#fff;" data-index="2">
+  <div style="max-width:900px;width:100%;">
+    <p class="tag fade-up" style="color:#60a5fa;border-color:#60a5fa;">Heritage & Transformation</p>
+    <h2 class="fade-up" style="font-size:clamp(36px,6vw,80px);font-weight:800;line-height:1.05;letter-spacing:-0.02em;margin-bottom:24px;">
+      傳統的重量，<br/>當代的設計。
+    </h2>
+    <p class="fade-up" style="font-size:clamp(15px,1.6vw,19px);color:#aaa;max-width:600px;line-height:1.9;font-weight:300;margin-bottom:40px;">
+      身為 <strong style="color:#fff;font-weight:600;">基隆老店第四代</strong>，深刻理解傳統產業面對數位轉型的痛點與契機。致力於將服務設計方法論引入家族事業，透過品牌重塑、體驗旅程優化，讓百年積累的匠人精神，在新世代找到共鳴。
+    </p>
+    <div class="fade-up" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:600px;">
+      <div style="border:1px solid #333;border-radius:16px;padding:20px 16px;text-align:center;">
+        <div style="font-size:28px;margin-bottom:8px;">🏪</div>
+        <div style="font-size:13px;color:#ccc;font-weight:500;">品牌重塑</div>
+      </div>
+      <div style="border:1px solid #333;border-radius:16px;padding:20px 16px;text-align:center;">
+        <div style="font-size:28px;margin-bottom:8px;">🗺️</div>
+        <div style="font-size:13px;color:#ccc;font-weight:500;">體驗設計</div>
+      </div>
+      <div style="border:1px solid #333;border-radius:16px;padding:20px 16px;text-align:center;">
+        <div style="font-size:28px;margin-bottom:8px;">📖</div>
+        <div style="font-size:13px;color:#ccc;font-weight:500;">故事轉譯</div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-num" style="color:#555;">03 / 05</span>
+</section>
+
+<!-- ════════════════════════════════
+     4. RESEARCH & AWARDS
+════════════════════════════════ -->
+<section class="slide" style="background:#fafafa;" data-index="3">
+  <div style="max-width:900px;width:100%;">
+    <p class="tag fade-up">Research & Awards</p>
+    <h2 class="fade-up" style="font-size:clamp(32px,5vw,64px);font-weight:800;line-height:1.1;letter-spacing:-0.02em;margin-bottom:40px;">
+      研究與榮耀
+    </h2>
+    <div class="fade-up" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+      <div class="award-card">
+        <div style="font-size:40px;margin-bottom:16px;">🏥</div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:0.1em;color:var(--accent);margin-bottom:8px;font-family:Inter,sans-serif;">RESEARCH PROJECT</div>
+        <h3 style="font-size:clamp(18px,2vw,22px);font-weight:700;margin-bottom:12px;line-height:1.3;">
+          IDDSI 吞嚥照護<br/>APP 研究計畫
+        </h3>
+        <p style="font-size:14px;color:#666;line-height:1.7;font-weight:300;">
+          以 IDDSI 國際標準為核心，研究居家照護環境下吞嚥障礙患者的備餐與餵食流程，設計輔助數位系統，改善照護者體驗。
+        </p>
+      </div>
+      <div class="award-card" style="border-color:#fbbf24;background:linear-gradient(135deg,#fffbeb,#fff);">
+        <div style="font-size:40px;margin-bottom:16px;">🏆</div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:0.1em;color:#d97706;margin-bottom:8px;font-family:Inter,sans-serif;">2025 AWARD</div>
+        <h3 style="font-size:clamp(18px,2vw,22px);font-weight:700;margin-bottom:12px;line-height:1.3;">
+          Changemaker<br/>金獎
+        </h3>
+        <p style="font-size:14px;color:#666;line-height:1.7;font-weight:300;">
+          2025 年度 Changemaker 競賽金獎得主，以跨域設計解決方案在眾多參賽者中脫穎而出。
+        </p>
+      </div>
+    </div>
+  </div>
+  <span class="slide-num">04 / 05</span>
+</section>
+
+<!-- ════════════════════════════════
+     5. CONTACT
+════════════════════════════════ -->
+<section class="slide" style="background:#fff;" data-index="4">
+  <div style="max-width:760px;width:100%;text-align:center;">
+    <p class="tag fade-up" style="margin:0 auto 24px;">Contact</p>
+    <h2 class="fade-up" style="font-size:clamp(40px,8vw,96px);font-weight:900;line-height:0.95;letter-spacing:-0.03em;margin-bottom:32px;">
+      讓我們<br/>一起創造。
+    </h2>
+    <p class="fade-up" style="font-size:17px;color:#666;line-height:1.8;max-width:440px;margin:0 auto 48px;font-weight:300;">
+      無論是研究合作、設計專案或只是想聊聊——我都很樂意。
+    </p>
+    <div class="fade-up" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:48px;">
+      <a href="mailto:hello@example.com" class="cta">✉ 寄信給我</a>
+      <a href="https://linkedin.com" target="_blank" class="cta-outline">LinkedIn →</a>
+    </div>
+    <div class="fade-up" style="border-top:1px solid var(--gray-200);padding-top:32px;font-size:13px;color:#bbb;font-family:Inter,sans-serif;">
+      © 2025 劉品姸 · Made with ❤️ in Taiwan
+    </div>
+  </div>
+  <span class="slide-num">05 / 05</span>
+</section>
+
+<script>
+  // ── Intersection Observer for fade-up ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.querySelectorAll('.fade-up').forEach(el => el.classList.add('visible'))
+      }
+    })
+  }, { threshold: 0.25 })
+
+  document.querySelectorAll('.slide').forEach(s => observer.observe(s))
+
+  // ── Nav dots ──
+  const dots = document.querySelectorAll('.dot')
+  const slides = document.querySelectorAll('.slide')
+
+  const slideObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const idx = entry.target.dataset.index
+        dots.forEach(d => d.classList.remove('active'))
+        dots[idx]?.classList.add('active')
+      }
+    })
+  }, { threshold: 0.5 })
+
+  slides.forEach(s => slideObserver.observe(s))
+
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      slides[dot.dataset.slide].scrollIntoView({ behavior: 'smooth' })
+    })
+  })
+
+  // ── Keyboard arrow navigation ──
+  let current = 0
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+      current = Math.min(current + 1, slides.length - 1)
+      slides[current].scrollIntoView({ behavior: 'smooth' })
+    }
+    if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+      current = Math.max(current - 1, 0)
+      slides[current].scrollIntoView({ behavior: 'smooth' })
+    }
+  })
+</script>
+</body>
+</html>
